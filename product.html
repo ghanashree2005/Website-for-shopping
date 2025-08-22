@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEasy - Products</title>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .product-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .action-button {
+      transition: background-color 0.3s ease;
+    }
+    @media (max-width: 640px) {
+      .product-card img {
+        width: 150px;
+        height: 150px;
+      }
+      .product-card h4 {
+        font-size: 1rem;
+      }
+      .action-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Navigation Component
+    const Navbar = () => {
+      const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+      return (
+        <nav className="bg-gray-800 text-white p-4 fixed w-full top-0 z-10">
+          <div className="container mx-auto flex justify-between items-center">
+            <h1 className="text-2xl font-bold">ShopEasy</h1>
+            <div className="flex items-center space-x-4">
+              {['index.html', 'explore.html', 'about.html', 'contact.html'].map(page => (
+                <a
+                  key={page}
+                  href={page}
+                  className="hover:text-gray-300 capitalize"
+                >
+                  {page === 'index.html' ? 'home' : page.replace('.html', '')}
+                </a>
+              ))}
+              <div
+                className="cursor-pointer"
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+              >
+                <i className="fas fa-user-circle text-2xl hover:text-blue-500"></i>
+              </div>
+            </div>
+          </div>
+          {showProfileMenu && (
+            <div className="absolute top-12 right-4 bg-white shadow-lg rounded-lg p-4 space-y-2 z-10">
+              <a href="wishlist.html" className="block w-full text-left text-red-500 hover:text-red-600">Wishlist</a>
+              <a href="cart.html" className="block w-full text-left text-green-500 hover:text-green-600">Cart</a>
+              <a href="order.html" className="block w-full text-left text-blue-500 hover:text-blue-600">Order</a>
+            </div>
+          )}
+        </nav>
+      );
+    };
+
+    // Product Component
+    const Product = () => {
+      const [category, setCategory] = useState('');
+      const [subcategory, setSubcategory] = useState('');
+
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setCategory(params.get('category') || '');
+        setSubcategory(params.get('subcategory') || '');
+      }, []);
+
+      const products = {
+        men: {
+          dress: [
+            { id: 1, name: "Men's Coat", price: 69.99, image: "https://i.pinimg.com/1200x/1e/7e/5b/1e7e5b6028e16256e6945dd9ccbab550.jpg" },
+            { id: 2, name: "Men's Shirt", price: 39.99, image: "https://i.pinimg.com/736x/1b/f8/cc/1bf8cc0fa076be377ea5db48e8f8ec18.jpg" },
+            { id: 3, name: "Men's Pant", price: 59.99, image: "https://i.pinimg.com/1200x/d9/83/01/d98301c6b9bf71c87f6a68d87eec335b.jpg" },
+            { id: 4, name: "Men's Safari", price: 79.99, image: "https://i.pinimg.com/1200x/d8/bb/7e/d8bb7e154c1fe1e53af5cdfefe210e33.jpg" },
+            { id: 5, name: "Men's T-Shirt", price: 39.99, image: "https://i.pinimg.com/1200x/27/b5/a1/27b5a1602087a7113d58118e357bdc54.jpg" },
+            { id: 6, name: "Men's Shorts", price: 49.99, image: "https://i.pinimg.com/1200x/a2/8c/fd/a28cfd77322a392f3b67b6af03eea6fb.jpg" }
+            
+          ],
+          shoe: [
+            { id: 7, name: "Men's Sneaker", price: 49.99, image: "https://i.pinimg.com/736x/b3/9f/93/b39f93dc20d48cc5a2784333134f8c8a.jpg" },
+            { id: 8, name: "Men's Formal Shoe", price: 69.99, image: "https://i.pinimg.com/1200x/b9/78/e6/b978e68fe2b2241a978f9c6d141a625f.jpg" },
+            { id: 9, name: "Men's Sports Shoe", price: 59.99, image: "https://i.pinimg.com/1200x/47/cc/41/47cc41c576a1fc3326cc6ee38eb70090.jpg" },
+            { id: 10, name: "Men's Winter Shoe", price: 49.99, image: "https://i.pinimg.com/1200x/dd/e4/cd/dde4cd1ee215e00f271cd4ab451caf59.jpg" },
+            { id: 11, name: "Men's Racing Boots", price: 89.99, image: "https://i.pinimg.com/1200x/9e/d0/43/9ed0435abc8f84451f2fa9aeea5d1916.jpg" },
+            { id: 12, name: "Men's Skechers Shoe", price: 79.99, image: "https://i.pinimg.com/1200x/8a/a2/a7/8aa2a77d1589557c805bc5d0233d3625.jpg" }
+          ],
+          accessories: [
+            { id: 13, name: "Men's Watch", price: 79.99, image: "https://i.pinimg.com/736x/13/06/83/130683735369c7991bf28c20d90242b3.jpg" },
+            { id: 14, name: "Men's Belt", price: 69.99, image: "https://i.pinimg.com/736x/d3/89/ff/d389ffaaa60b592b709c40f5aac98c40.jpg" },
+            { id: 15, name: "Men's Wallet", price: 49.99, image: "https://i.pinimg.com/1200x/46/86/49/46864941f8d983b2c7359233e7856115.jpg" },
+            { id: 16, name: "Men's Ring", price: 39.99, image: "https://i.pinimg.com/736x/eb/24/1a/eb241a5b3646245d06b9267e63f849ec.jpg" },
+            { id: 17, name: "Men's Sunglass", price: 59.99, image: "https://i.pinimg.com/1200x/9b/23/35/9b23355a8e63168f849d1bdf64326589.jpg" },
+            { id: 18, name: "Men's Perfume", price: 89.99, image: "https://i.pinimg.com/1200x/d4/cb/88/d4cb88b804aef2b19d9d0765aa0f0a2b.jpg" }
+          ]
+        },
+        women: {
+          dress: [
+            { id: 7, name: "Women's Long Sleeve Dress", price: 39.99, image: "https://i.pinimg.com/1200x/24/ca/fc/24cafc945588420e761a54a94824d89a.jpg" },
+            { id: 8, name: "Women's Gown", price: 24.99, image: "https://i.pinimg.com/736x/4b/bc/df/4bbcdf5fce1a07cff5e6b38ae85af88b.jpg" },
+            { id: 9, name: "Women's Jumpsuit", price: 24.99, image: "https://i.pinimg.com/1200x/fb/4b/7f/fb4b7f07cdc1bab1b4473a96258f34d9.jpg" },
+            { id: 10, name: "Women's T-Shirt", price: 24.99, image: "https://i.pinimg.com/1200x/75/4a/d0/754ad0a738626deb1b3efc2f9d0d52d0.jpg" },
+            { id: 11, name: "Women's Top", price: 24.99, image: "https://i.pinimg.com/1200x/95/be/6d/95be6df7ff7c1ca9e859f137f6ba7b97.jpg" },
+            { id: 12, name: "Women's Skirt", price: 24.99, image: "https://i.pinimg.com/736x/6b/96/60/6b96605043ebfe266babee63c032dd21.jpg" }
+          ],
+          shoe: [
+            { id: 13, name: "Women's High Heel", price: 59.99, image: "https://i.pinimg.com/1200x/36/4b/2c/364b2caee495077cea5c66a1b322c495.jpg" },
+            { id: 14, name: "Women's Flat", price: 34.99, image: "https://i.pinimg.com/1200x/15/47/03/1547039291462bebfdd36b575c1c4142.jpg" },
+            { id: 15, name: "Women's Snow Boots", price: 69.99, image: "https://i.pinimg.com/1200x/82/d9/86/82d986646da56aaa1327a8305847b3a6.jpg" },
+            { id: 16, name: "Women's Sneakers", price: 72.99, image: "https://i.pinimg.com/1200x/af/90/96/af9096f69d50eeb799bcf1c5d37f4b5c.jpg" },
+            { id: 17, name: "Women's Formal Shoe", price:54.99, image: "https://i.pinimg.com/736x/e8/53/80/e853806f611d67df5141a63b8517df19.jpg" },
+            { id: 18, name: "Women's Stylish Boots", price: 24.99, image: "https://i.pinimg.com/736x/c0/14/0e/c0140ee10feeee4b892ac4b46720c426.jpg" }
+          ],
+          accessories: [
+            { id: 19, name: "Women's Bracelet", price: 49.99, image: "https://i.pinimg.com/1200x/8b/0a/9e/8b0a9ec4431b167ecc1fcc7ec4a83244.jpg" },
+            { id: 20, name: "Women's Watch", price: 69.99, image: "https://i.pinimg.com/1200x/06/2f/9e/062f9ead5553577e1605e49efca7a3bc.jpg" },
+            { id: 21, name: "Women's Chain", price: 84.99, image: "https://i.pinimg.com/736x/f3/65/62/f365629116836257eff46f66b9e8f6fe.jpg" },
+            { id: 22, name: "Women's Ring", price: 46.99, image: "https://i.pinimg.com/736x/b6/2e/88/b62e887f7a9424e655a71de5a616b547.jpg" },
+            { id: 23, name: "Women's Handbag", price: 34.99, image: "https://i.pinimg.com/736x/16/24/11/1624115f50e4ccf4ce5ac2c2f9f51d24.jpg" },
+            { id: 24, name: "Women's Sunglass", price: 74.99, image: "https://i.pinimg.com/736x/0c/d9/f2/0cd9f2544361a0536e0d063d4107e151.jpg" },
+            
+          ]
+        },
+        kids: {
+          dress: [
+            { id: 13, name: "Kid's Collar Dress", price: 19.99, image: "https://i.pinimg.com/1200x/d8/81/3f/d8813fd7eaf197ff8060ea10e5f2a007.jpg" },
+            { id: 14, name: "Kid's Pant", price: 14.99, image: "https://i.pinimg.com/736x/30/e3/f5/30e3f54b48e7ae6484addfcba763d909.jpg" },
+            { id: 15, name: "Kid's  Gown", price: 14.99, image: "https://i.pinimg.com/1200x/04/7c/86/047c8689b9356f6e2c710cec128e9e69.jpg" },
+            { id: 16, name: "Kid's Summer Outfit", price: 14.99, image: "https://i.pinimg.com/474x/10/cf/43/10cf43d91f7a831d793c73358ca2117d.jpg" },
+            { id: 17, name: "Kid's Skirt", price: 14.99, image: "https://i.pinimg.com/736x/72/9d/28/729d28bdb753a13689d9a1a5fd666f0b.jpg" },
+            { id: 18, name: "Kid's Frock", price: 14.99, image: "https://i.pinimg.com/1200x/d6/f8/5f/d6f85f4d80762d896c8d2e5f0e23f621.jpg" }
+              ],
+          shoe: [
+            { id: 16, name: "Kid's Sneaker", price: 29.99, image: "https://i.pinimg.com/1200x/a1/f8/53/a1f85320f88e71a4eb1a9e500a4381e3.jpg" },
+            { id: 17, name: "Kid's Sandal", price: 24.99, image: "https://i.pinimg.com/736x/c6/ac/db/c6acdb91a8d5a3320c42bfb467a3cacb.jpg" },
+            { id: 18, name: "Kid's Prewalker Shoe", price: 14.99, image: "https://i.pinimg.com/736x/2f/2c/f7/2f2cf7124b37ef0ff274a7330965bf32.jpg" },
+            { id: 19, name: "Kid's LED Light Shoe", price: 14.99, image: "https://i.pinimg.com/1200x/34/73/c5/3473c5278040af35afc92fcef281c4ce.jpg" },
+            { id: 20, name: "Kid's Toddler Shoe", price: 14.99, image: "https://i.pinimg.com/736x/8e/05/44/8e0544f33af92c4a3c8854c8b3433906.jpg" },
+            { id: 21, name: "Kid's Crystal Shoe", price: 14.99, image: "https://i.pinimg.com/736x/a3/17/28/a317287f5fbd5281824cbd23815b39f7.jpg" }
+              ],
+          toys: [
+            { id: 22, name: "Action Figure", price: 19.99, image: "https://i.pinimg.com/1200x/5a/93/5c/5a935ca2e3c221aa5b7caee5d42219ae.jpg" },
+            { id: 23, name: "Puzzle", price: 23.99, image: "https://i.pinimg.com/1200x/ad/ad/8d/adad8df3308911a3dc9b77a340e4a39e.jpg" },
+            { id: 24, name: "Laptop", price: 84.99, image: "https://i.pinimg.com/736x/91/46/1f/91461f305d7f938813c0730268091e43.jpg" },
+            { id: 25, name: "House Play Set", price: 14.99, image: "https://i.pinimg.com/1200x/50/ea/99/50ea9951a8c82b1548b859ac7b085fe6.jpg" },
+            { id: 26, name: "TV", price: 74.99, image: "https://i.pinimg.com/736x/1e/a3/27/1ea327d6c25a182ad2a9f41a48daade5.jpg" },
+            { id: 27, name: "Electric Scooter", price: 53.99, image: "https://i.pinimg.com/1200x/5d/67/03/5d67039832d0379bc9a15a25fc5c8ce7.jpg" },
+            
+         
+          ]
+        }
+      };
+
+      const addToCart = (product) => {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!cart.some(item => item.id === product.id)) {
+          cart.push(product);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          alert(`${product.name} added to cart!`);
+        } else {
+          alert(`${product.name} is already in the cart!`);
+        }
+      };
+
+      const addToWishlist = (product) => {
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        if (!wishlist.some(item => item.id === product.id)) {
+          wishlist.push(product);
+          localStorage.setItem('wishlist', JSON.stringify(wishlist));
+          alert(`${product.name} added to wishlist!`);
+        } else {
+          alert(`${product.name} is already in the wishlist!`);
+        }
+      };
+
+      const filteredProducts = category && subcategory && products[category]?.[subcategory] 
+        ? products[category][subcategory] 
+        : [];
+
+      return (
+        <div className="container mx-auto p-4 pt-20">
+          <h2 className="text-3xl font-bold mb-8 text-center capitalize">
+            {category} {subcategory} Products
+          </h2>
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {filteredProducts.map(product => (
+                <div
+                  key={product.id}
+                  className="product-card bg-gray-100 p-4 rounded-lg text-center cursor-pointer hover:bg-gray-200"
+                >
+                  <h4 className="text-lg font-semibold">{product.name}</h4>
+                  <img src={product.image} alt={product.name} className="mt-2 mx-auto w-48 h-48 object-cover rounded" />
+                  <p className="mt-2">${product.price.toFixed(2)}</p>
+                  <div className="flex justify-center gap-2 mt-2">
+                    <button
+                      className="action-button bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={() => addToCart(product)}
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      className="action-button bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      onClick={() => addToWishlist(product)}
+                    >
+                      Wishlist
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No products found for this category and subcategory.</p>
+          )}
+        </div>
+      );
+    };
+
+    // Main App Component
+    const App = () => (
+      <div>
+        <Navbar />
+        <Product />
+      </div>
+    );
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

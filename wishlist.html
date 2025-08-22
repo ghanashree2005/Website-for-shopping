@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEasy - Wishlist</title>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wishlist-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .wishlist-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .action-button {
+      transition: background-color 0.3s ease;
+    }
+    @media (max-width: 640px) {
+      .wishlist-card img {
+        width: 150px;
+        height: 150px;
+      }
+      .wishlist-card h4 {
+        font-size: 1rem;
+      }
+      .action-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Navigation Component
+    const Navbar = () => {
+      const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+      return (
+        <nav className="bg-gray-800 text-white p-4 fixed w-full top-0 z-10">
+          <div className="container mx-auto flex justify-between items-center">
+            <h1 className="text-2xl font-bold">ShopEasy</h1>
+            <div className="flex items-center space-x-4">
+              {['index.html', 'explore.html', 'about.html', 'contact.html'].map(page => (
+                <a
+                  key={page}
+                  href={page}
+                  className="hover:text-gray-300 capitalize"
+                >
+                  {page === 'index.html' ? 'home' : page.replace('.html', '')}
+                </a>
+              ))}
+              <div
+                className="cursor-pointer"
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+              >
+                <i className="fas fa-user-circle text-2xl hover:text-blue-500"></i>
+              </div>
+            </div>
+          </div>
+          {showProfileMenu && (
+            <div className="absolute top-12 right-4 bg-white shadow-lg rounded-lg p-4 space-y-2 z-10">
+              <a href="wishlist.html" className="block w-full text-left text-red-500 hover:text-red-600">Wishlist</a>
+              <a href="cart.html" className="block w-full text-left text-green-500 hover:text-green-600">Cart</a>
+              <a href="order.html" className="block w-full text-left text-blue-500 hover:text-blue-600">Order</a>
+            </div>
+          )}
+        </nav>
+      );
+    };
+
+    // Wishlist Component
+    const Wishlist = () => {
+      const [wishlistItems, setWishlistItems] = useState([]);
+
+      useEffect(() => {
+        const items = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistItems(items);
+      }, []);
+
+      const removeFromWishlist = (id) => {
+        const updatedWishlist = wishlistItems.filter(item => item.id !== id);
+        setWishlistItems(updatedWishlist);
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        alert('Item removed from wishlist!');
+      };
+
+      const addToCartFromWishlist = (product) => {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!cart.some(item => item.id === product.id)) {
+          cart.push(product);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          alert(`${product.name} added to cart from wishlist!`);
+        } else {
+          alert(`${product.name} is already in the cart!`);
+        }
+      };
+
+      return (
+        <div className="container mx-auto p-4 pt-20">
+          <h2 className="text-3xl font-bold mb-8 text-center">Your Wishlist</h2>
+          {wishlistItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {wishlistItems.map(item => (
+                <div
+                  key={item.id}
+                  className="wishlist-card bg-gray-100 p-4 rounded-lg text-center"
+                >
+                  <h4 className="text-lg font-semibold">{item.name}</h4>
+                  <img src={item.image} alt={item.name} className="mt-2 mx-auto w-48 h-48 object-cover rounded" />
+                  <p className="mt-2">${item.price.toFixed(2)}</p>
+                  <div className="flex justify-center gap-2 mt-2">
+                    <button
+                      className="action-button bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={() => addToCartFromWishlist(item)}
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      className="action-button bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      onClick={() => removeFromWishlist(item.id)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">Your wishlist is empty.</p>
+          )}
+        </div>
+      );
+    };
+
+    // Main App Component
+    const App = () => (
+      <div>
+        <Navbar />
+        <Wishlist />
+      </div>
+    );
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
